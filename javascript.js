@@ -44,7 +44,9 @@ function plusOperator(){
         console.log('vai somar n2',n2);
         soma = add(n1,n2) 
         displayCalc.textContent = soma
-        n1= soma
+        display = ''
+        n1 = soma
+        n2 = 0
     }
 }
 //Buttões estão sendo selecionados pela DOM e incorporados no JS, também é dado um valor para cada botão
