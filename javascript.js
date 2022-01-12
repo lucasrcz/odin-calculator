@@ -1,94 +1,139 @@
-function add(a,b){
-    let sum = a + b
-    return sum
-}
+const display1El = document.querySelector(".display-1");
+const display2El = document.querySelector(".display-2");
+const tempResultEl = document.querySelector(".temp-result");
+const numberEl = document.querySelectorAll(".number");
+const operationEl = document.querySelectorAll(".operation");
+const equalEl = document.querySelector(".equal");
+const clearAllEl = document.querySelector(".all-clear");
+const clearLastEl = document.querySelector(".last-entity-clear");
 
-function substract(a,b){
-    let sum = a - b
-    return sum
-}
+let dis1Num = '';
+let dis2Num = '';
+let result = null
+let lastOperation = '';
+let haveDot = false;
 
-function multiply(a,b){
-    let sum = a * b
-    return sum
-}
-
-function divide(a,b){
-    let sum = a/b
-    return sum
-}
-
-function operate(a,b){
-    divide(a,b)
-}
-
-function addDisplay(button){
-    display = display + button
-    return displayCalc.textContent = display
-}
-function getDisplayed(button){
-    button.addEventListener('click',function(){
-    addDisplay(button.value)
+numberEl.forEach(number =>{
+    number.addEventListener('click',(e)=>{
+        if(e.target.innerText === '.' && !haveDot){
+            haveDot = true;
+        }else if(e.target.innerText === '.' && haveDot){
+            return;
+        }
+        dis2Num += e.target.innerText;
+        display2El.innerText = dis2Num;
+    })
 })
+
+operationEl.forEach(operation => {
+    operation.addEventListener('click',(e)=>{
+        if(!dis2Num)return;
+        haveDot=false; 
+        const operationName = e.target.innerText;
+        if(dis1Num && dis2Num && lastOperation){
+            mathOperation();
+        }else{
+            result = parseFloat(dis2Num);
+        }
+        clearVar(operationName);
+        lastOperation =operationName
+        console.log(result);
+    })
+});
+
+function clearVar(name = ''){
+    dis1Num += dis2Num + '' + name + '';
+    display1El.innerText = dis1Num
+    display2El.innerText = ''
+    dis2Num = '';
+    tempResultEl.innerText = result
 }
-function plusOperator(){
-    if(n1===0){
-        display = displayCalc.textContent
-        n1 = parseInt(display)
-        console.log(n1);
-        display = ''
-    }else{
-        display = displayCalc.textContent
-        n2 = parseInt(display)
-        console.log('vai somar n1',n1)
-        console.log('vai somar n2',n2);
-        soma = add(n1,n2) 
-        displayCalc.textContent = soma
-        display = ''
-        n1 = soma
-        n2 = 0
+
+function mathOperation(){
+    if(lastOperation === 'X'){
+        result = parseFloat(result) * parseFloat(dis2Num);
+    }else if( lastOperation === '+'){
+        result = parseFloat(result) + parseFloat(dis2Num)
+    }else if( lastOperation === '-'){
+        result = parseFloat(result) - parseFloat(dis2Num)
+    }else if( lastOperation === '/'){
+        result = parseFloat(result) / parseFloat(dis2Num)
+    }else if( lastOperation === '%'){
+        result = parseFloat(result) % parseFloat(dis2Num)
     }
 }
-//Buttões estão sendo selecionados pela DOM e incorporados no JS, também é dado um valor para cada botão
-let n1 = 0
-let n2 = 0
-let display = ''
-const oneButton = document.querySelector('#one')
-oneButton.value = '1'
-const twoButton = document.querySelector('#two')
-twoButton.value = '2'
-const threeButton = document.querySelector('#three')
-threeButton.value = '3'
-const fourButton = document.querySelector('#four')
-fourButton.value ='4'
-const fiveButton = document.querySelector('#five')
-fiveButton.value ='5'
-const sixButton = document.querySelector('#six')
-sixButton.value = '6'
-const sevenButton = document.querySelector('#seven')
-sevenButton.value = '7'
-const eigthButton = document.querySelector('#eigth')
-eigthButton.value = '8'
-const nineButton = document.querySelector('#nine')
-nineButton.value = '9'
-const zeroButton = document.querySelector('#zero')
-zeroButton.value = '0'
-const displayCalc = document.querySelector('#display')
-const plusButton = document.querySelector('#plus')
-plusButton.value = '+'
-//Os butoes estao interativos com essas chamadas de função
-getDisplayed(oneButton)
-getDisplayed(twoButton)
-getDisplayed(threeButton)
-getDisplayed(fourButton)
-getDisplayed(fiveButton)
-getDisplayed(sixButton)
-getDisplayed(sevenButton)
-getDisplayed(eigthButton)
-getDisplayed(nineButton)
-getDisplayed(zeroButton)
-/* getDisplayed(plusButton) */
-plusButton.addEventListener('click',function(){
-    plusOperator()
+
+equalEl.addEventListener('click',(e)=>{
+    if(!dis1Num || !dis2Num) return;
+    haveDot=false;
+    mathOperation();
+    clearVar();
+    display2El.innerText = result;
+    tempResultEl.innerText = '';
+    dis2Num = result;
+    dis1Num = '';
+});
+
+clearAllEl.addEventListener('click',(e)=>{
+    display1El.innerText = '0';
+    display2El.innerText = '0';
+    dis1Num = '';
+    dis2Num = '';
+    result = '';
+    tempResultEl.innerText = '0';
+
 })
 
+clearLastEl.addEventListener('click',(e)=>{
+    dis2Num = '';
+    display2El.innerText = '0';
+})
+
+window.addEventListener('keydown', (e)=>{
+    if( 
+        e.key === '0' ||
+        e.key === '1' ||
+        e.key === '2' ||
+        e.key === '3' ||
+        e.key === '4' ||
+        e.key === '5' ||
+        e.key === '6' ||
+        e.key === '7' ||
+        e.key === '8' ||
+        e.key === '9' ||
+        e.key === '.' 
+    ){
+        clickButtonEl(e.key);
+    }else if(
+        e.key === '+'||
+        e.key === '-'||
+        e.key === '/'||
+        e.key === '%'
+    ){
+        clickOperation(e.key);
+    }else if(e.key === '*'){
+        clickOperation('X')
+    }else if(e.key == 'Enter' || e.key ==='='){
+        clickEqual()
+    }
+
+})
+
+function clickButtonEl(key){
+    numberEl.forEach(button =>{
+    if(button.innerText === key)
+      button.click()
+    })
+}
+
+function clickOperation(key){
+    operationEl.forEach(button =>{
+        if(button.innerText === key){
+            button.click();
+        }
+    })
+}
+
+function clickEqual(){
+    equalEl.click();
+}
